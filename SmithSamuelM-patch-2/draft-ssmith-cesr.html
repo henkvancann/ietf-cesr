@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Composable Event Streaming Representation (CESR)</title>
+<meta content="S. Smith" name="author">
+<meta content="
+       TODO Abstract 
+    " name="description">
+<meta content="xml2rfc 3.10.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-ssmith-cesr-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.10.0
+    Python 3.9.5
+    appdirs 1.4.4
+    ConfigArgParse 1.3
+    google-i18n-address 2.5.0
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 2.11.3
+    kitchen 1.2.6
+    lxml 4.6.3
+    pycountry 20.7.3
+    pyflakes 2.3.0
+    PyYAML 5.4.1
+    requests 2.25.1
+    setuptools 52.0.0
+    six 1.15.0
+-->
+<link href="draft-ssmith-cesr.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+html {
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  scrollbar-color: #bbb #eee;
+}
+@media (prefers-color-scheme: dark) {
+html {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+dd.break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href].selfRef {
+  color: var(--text-color);
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px 'Oxygen Mono', monospace;
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines */
+  line-height: 0;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  pre {
+    display: inline-block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  pre + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+tr:nth-child(2n) > td {
+  background-color: var(--background-color);
+}
+tr:nth-child(2n+1) > td {
+  background-color: var(--highlight-color);
+}
+thead+tbody > tr:nth-child(2n) > td {
+  background-color: var(--highlight-color);
+}
+thead+tbody > tr:nth-child(2n+1) > td {
+  background-color: var(--background-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 8em;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  margin: 0;
+  clear: left;
+  float: left;
+  text-align: right;
+}
+#identifiers dd {
+  margin: 0 0 0 calc(1em + var(--identifier-width));
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 500px) {
+  .index ul {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  .index ul ul {
+    column-count: 1;
+    column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul p, #toc ul li {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left, table .text-left {
+  text-align: left;
+}
+table .text-center, table .text-center {
+  text-align: center;
+}
+table .text-right, table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  dd {
+    page-break-before: avoid;
+  }
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+</style>
+
+</head>
+<body>
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">CESR</td>
+<td class="right">October 2021</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Smith</td>
+<td class="center">Expires 15 April 2022</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">TODO Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ssmith-cesr-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2021-10-12" class="published">12 October 2021</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2022-04-15">15 April 2022</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">S. Smith</div>
+<div class="org">ProSapien LLC</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Composable Event Streaming Representation (CESR)</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/WebOfTrust/ietf-cesr">https://github.com/WebOfTrust/ietf-cesr</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 15 April 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2021 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Simplified BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Simplified BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-base64-master-code-table" class="xref">Base64 Master Code Table</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-conventions-and-definitions" class="xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="xref"></a><a href="#name-acknowledgments" class="xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">CESR derivation codes serve several purposes and provide several features. One main purpose is to allow compact encoding of cryptographic material in the text domain. What we mean by text domain is any representation that is is restricted to printable/viewable ASCII text characters. Cryptographic material is largely composed of long strings of pseudo-random numbers. CESR uses the IETF RFC-3638 Base64URL standard to encode cryptographic material as strings of binary bytes into a text domain representation [[1]]. In order to process a given cryptographic material item its derivation from other cryptographic material and the cryptographic suite of operations that govern that derivation also need to be known. Typically this additional cryptographic information may be provided via some datastructure. For compactness CESR encodes the derivation information which includes the cryptographic suite into a lookup table of codes. To keep the codes short, only the essential information is encoded in the table. CESR <span class="bcp14">MUST</span> be used in context so that code and context togetherr fully characterize the cryptographic material usage and derivation. This also contributes to compactness.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">These codes are also represented in the textual domain with characters drawn from the Base64 set of characters. Namely Base64 uses characters [A-Z,a-z,-,_]. In addition the "=" character is used as a pad character to ensure lossless round tripping of concatenated binary items to Base64 and back. These 64 characters map to the values [0-63]. The Base64 derivation code is prepended to a given Base64 converted cryptographic material item to produce an extremely compact text domain representation of a given cryptographic material item. When a Base64 derivation code is prepended to a Base64 encoded cryptographic material item, the resultant string of characters is called fully qualified Base64 or qualified Base64 and may be labeled "qb64" for short. We call this a fully qualified cryptographic primitive. This fully qualified compact string (a primitive) may then be used in any text domain representation, including especially name spaces. One other less obvious but important property of KERI's encoding is that all qualified cryptographic material items satisfy what we call lossless composition via concatenation, or composabilty for short. KERI is designed for high performance asynchronous data streaming and event sourcing applications. The sheer volume of cryptographic material, primarily, signatures, in a streaming application demands a streamable protocol. Many of KERI's important use cases benefit specifically from streaming in the text domain not merely the binary domain. Composability allows text domain streams of primitives or portions of streams (streamlets) to be converted as a whole to the binary domain and back again without loss. The attached KID0001 Comment document goes into some length on what composability means.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">But simply, each 8 bit long Base64 character represents only 6 bits of information. Each binary byte represents a full 8 bits of information. When converting streams made up of concatenated primitives back and forth between the text and binary domains, the converted results will not align on byte or character boundaries at the end of each primitive unless the primitives themselves are integer multiples of 24 bits of information. Twenty-four is the least common multiple of six and eight. It takes 3 binary bytes to represent 24 bits of information and 4 Base64 characters to represent 24 bits of information. Composability via concatenation is guaranteed if any primitive is an integer multiple of four characters in the text domain and an integer multiple of three bytes in the binary domain. KERI's derivation code table is designed to satisfy this composability constraint. In other words, fully qualified KERI cryptographic primitives are composable via concatenation in both the text (Base64)and binary domains. This provides the ability to create composable streaming protocols that use KERI's coding table that are equally at home in the text and binary domains. Without composability some other means of framing, delimiting, or enveloping cryptographic material items is needed for lossless conversion of group of cryptographic material items as a group between the text and binary domain. Mere concatenation of a group, which is the most compact, is not supported without composable primitives.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">The length of a composable Base64 derivation code is a function of the length of the converted cyptographic material. The length of the derivation code plus material must be an even multiple of four bytes. Standard Base64 conversions add pad characters to ensure composability of any converted item [[1]]. The number of pad characters is a function of the length of the item to be converted. If the item's length in bytes is a multiple of three bytes then the converted item's length will be a multiple of four base 64 characters and therefore will not need any pad characters. Any binary item whose length mod 3 is 1 will need 2 pad characters to makes its converted length a multiple of four characters. Any binary item whose length mod 3 is 2 will need 1 pad characters to makes its converted length a multiple of four characters. Consequently the most compact encoding is to replace pad characters with derivation codes (only prepended not appended). This gives either 1 or 2 character codes. When there are no pad characters then the code length is 3 characters. As a result the CESR code table consists primarily of 1, 2, and 4 character codes. Longer codes may be used as long as they satisfy the padding constraint. Thus for converted cryptographic material with 1 pad character, the allowed code lengths are 1, 5, 9, ... characters. For converted cryptographic material with 2 pad characters the allowed code lengths are 2, 6, 10, ... characters. For converted cryptographic material with 0 pad characters the allowed code lengths are 4, 8, 12, ... characters.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">CESR's approach to filling the tables is a first needed first served basis. In addition CESR's requirement that all cryptographic operations maintain at least 128 bits of cryptographic strength precludes the entry of many weak cryptographic suites into the tables, at the least in the compact tables. CESR's compact code table includes only best-of-class cryptographic operations. In 2022 it is expected that NIST will approve standardized post-quantum resistant cryptographic signatures (CESR's digests are already post quantum resistant). At which time the most appropriate siganture suites will be added. Falcon appears to be the leader with open source code already available.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">There are three types of codes in the code table. The context of where the material appears determines which type of code to use. The first type of code, called a basic code, is for basic primitives. The minimum code length for basic codes is 1. The second type of code, called an indexed code, is for indexed primitives. Indexed codes find application with cryptographic material that is attached to events. The seminal use case is for attached signatures. Becasue KERI operates asynchronously, attached signatures for multi-signature schemes may be collected asynchronously. The number of attached signatures may vary. The index within the code enables compact indication of the associated public key from the ordered key list in the key state that may be used to verify a given attached signature. Indexed codes may be used for other contexts where an offset or count is helpful. The minimum code length for indexed codes is two.  The third type of code, called a counter code, is for counting the number of characters, primitives or groups in a collection that follows the cod. In other words a counter code provides a count of the number of members of a group or the sum of all the characters for all the primitives in that group.  Counter codes allow framing of cryptographic material for ease of parsing a concatenated stream of primitives or groups of primitives. They are also called composition codes because they allow the composition via concatenation of primitives and groups of primitives. This enables truly powerful expressions of parsable composable streaming content in both the text and binary domain. The minimun length of a counter code is four characters. Counter codes are standalone and do not have attached cryptographic material. They are primitives in their own right. Counter codes may be stacked, i.e. multiple counter codes may appear in succession. They perform nested compositions on the following crypto material.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<div id="base64-master-code-table">
+<section id="section-1.1">
+        <h3 id="name-base64-master-code-table">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-base64-master-code-table" class="section-name selfRef">Base64 Master Code Table</a>
+        </h3>
+<p id="section-1.1-1">This master table includes all three types of codes separated by headers. The table has 5 columns. These are as follows:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">1) The Base64 code itself. 
+2) A description of what is encoded or appended to the code.
+3) The length in characters of the code.
+4) the length in characters of the index or count portion of the code 
+5) The length in characters of the fully qualified primitive including code and append material or number of elements in group.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">For each code type, a special character is used when the code length is longer than the minimum length. For basic codes the minimum length is one. Two characters codes start with "0". Four character codes start with "1". For indexed codes the minimum code length is two.  Four character codes start with "0". For counter codes the minimum code length is four. Counter codes all start with "-" and eight character counter codes start with "-0".<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">Parsing operation is as follows: Based on context, an expected code type is selected. The parser then reads the first character of the code. Based on the first character, the parser is able to determine the length of the code. The parser then extracts the full code given its length and then looks up the code in the table to confirm it is a valid code. The table includes the total length of the appended primitive, if any, which allows the parser to then extract the appended characters and perform any conversions if needed on the appended material. For indexed or count codes the table includes the number of characters in the code that are part of the index or count. Lookup in the indexed and count code tables for valid codes do not include the index characters.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1-5">The counter codes are special, they enable framing of a group of crypto material primitives or groups of primitives. This can be used by a parser to perform concurrent or pipelined processing of streams of concatenated fully qualified cypto material or to determine the end of attached material after one event and the start of a new event.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.1-6">There is a dual representation of the table in the binary domain. A Base64 primitive when converted as a whole from Base64 to Base2 binary is in a format called fully qualified base2 or qualified base2 or qb2 for short. Each code character in qb64 converts to a sextet (6 bits) (two octal digits) in qb2 and the appended crypto material is shifted 2 bits for each pad character equivalent. A parser needs to extract the first sextet to determine how many remaining sextets of code there are and from that look up how many bytes total to extract. A binary domain parser of qb2 format must perform some bit level extraction and shifting operations. But this is not difficult for binary domain parsers. Whereas a text domain parser need only use character level operations. This is described in more detail in the KID0001 Commentary document.<a href="#section-1.1-6" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-center" rowspan="1" colspan="1">Code</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
+              <th class="text-left" rowspan="1" colspan="1">Code Length</th>
+              <th class="text-left" rowspan="1" colspan="1">Index Length</th>
+              <th class="text-left" rowspan="1" colspan="1">Total Length</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic One Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">A</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of Ed25519 private key of length 256 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">B</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">C</td>
+              <td class="text-left" rowspan="1" colspan="1">X25519 public encryption key. May be converted from Ed25519 public signing verification key.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">D</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">E</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake3-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">F</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2b-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">G</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2s-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">H</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA3-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">I</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA2-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">J</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of ECDSA secp256k1 private key of length 256 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">K</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of Ed448 private key of length 448 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">76</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">L</td>
+              <td class="text-left" rowspan="1" colspan="1">X448 public encryption key. May be converted from Ed448 public signing verification key.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">76</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">M</td>
+              <td class="text-left" rowspan="1" colspan="1">Short value of length 16 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic Two Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0A</td>
+              <td class="text-left" rowspan="1" colspan="1">Random salt, seed, private key, or sequence number of length 128 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">24</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0B</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0C</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0D</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake3-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0E</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2b-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0F</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA3-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0G</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA2-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0H</td>
+              <td class="text-left" rowspan="1" colspan="1">Long value of length 32 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAA</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">48</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAB</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 public signing verification or encryption key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">48</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAC</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">80</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAD</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">80</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAE</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">156</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAF</td>
+              <td class="text-left" rowspan="1" colspan="1">Tag Base64 4 chars or 3 byte number</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAG</td>
+              <td class="text-left" rowspan="1" colspan="1">DateTime Base64 custom encoded 32 char ISO-8601 DateTime</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">36</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Indexed Two Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">A#</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">B#</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Indexed Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0A##</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">156</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0B##</td>
+              <td class="text-left" rowspan="1" colspan="1">Label Base64 chars of variable length L=N*4 where N is value of index  total = L+4</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">Variable</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Counter Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-A##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 indexed controller signatures</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-B##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 indexed witness signatures</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-C##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 nontransferable identifier receipt couples  pre+sig</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-D##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 transferable identifier receipt quadruples  pre+snu+dig+sig</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-E##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 first seen replay couples fn+dt</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-F##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 transferable indexed sig groups pre+snu+dig + idx sig group</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-U##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in message data</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-V##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total attached grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-W##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total message data grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-X##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total group message data plus attachments qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-Y##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in group. (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-Z##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of grouped material qualified Base64 4 char quadlets (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-a##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of anchor seal groups in list  (anchor seal list) (a)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-c##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of config traits (each trait is 4 char quadlet   (configuration trait list) (c)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-d##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of digest seal Base64 4 char quadlets in digest  (digest seal  (d)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-e##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of event seal Base64 4 char quadlets in seal triple of (event seal) (i, s, d)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-k##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of keys in list  (key list) (k)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-l##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of locations seal Base64 4 char quadlets in seal quadruple of (location seal) (i, s, t, p)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-r##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of root digest seal Base64 4 char quadlets in root digest  (root digest) (rd)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-w##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of witnesses in list  (witness list or witness remove list or witness add list) (w, wr, wa)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Counter Eight Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0U#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in message data</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0V#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total attached grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0W#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total message data grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0X#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total group message data plus attachments qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0Y#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in group (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0Z#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of grouped  material qualified Base64 4 char quadlets (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0a#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of anchor seals  (seal groups in list)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-1.1-8">The table includes one complex group that is composed of two groups. This is the counter attachment group 
+with code<code>-F##</code> where <code>##</code> is replaced by the two character Base64 count of the number of complex groups.<br>
+This is known as the TransIndexedSigGroups counter.  Within the complex group are one more more attached
+groups where each group consists of a triple pre+snu+dig
+followed by a ControllerIdxSigs group that in turn consists of a counter code <code>-A##</code> followed by one or more
+indexed signature primitives. The following example details how this complex group may appear.<a href="#section-1.1-8" class="pilcrow">¶</a></p>
+<p id="section-1.1-9">The example has only one group. The example is annotated with comments, spaces and line feeds for clarity.<a href="#section-1.1-9" class="pilcrow">¶</a></p>
+<p id="section-1.1-10">```
+-FAB     # Trans Indexed Sig Groups counter code 1 following group
+E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y    # trans prefix of signer for sigs
+-EAB0AAAAAAAAAAAAAAAAAAAAAAB    # sequence number of est event of signer's public keys for sigs
+EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM      # digest of est event of signer's public keys for sigs
+-AAD     # Controller Indexed Sigs counter code 3 following sigs
+AA5267UlFg1jHee4Dauht77SzGl8WUC_0oimYG5If3SdIOSzWM8Qs9SFajAilQcozXJVnbkY5stG_K4NbKdNB4AQ         # sig 0
+ABBgeqntZW3Gu4HL0h3odYz6LaZ_SMfmITL-Btoq_7OZFe3L16jmOe49Ur108wH7mnBaq2E_0U0N0c5vgrJtDpAQ    # sig 1
+ACTD7NDX93ZGTkZBBuSeSGsAQ7u0hngpNTZTK_Um7rUZGnLRNJvo5oOnnC1J2iBQHuxoq8PyjdT3BHS2LiPrs2Cg  # sig 2<a href="#section-1.1-10" class="pilcrow">¶</a></p>
+<p id="section-1.1-11">```<a href="#section-1.1-11" class="pilcrow">¶</a></p>
+<p id="section-1.1-12">Given this comples attachment group we no longer need to embed an Event Seal in messages to indicate the
+establishment event for of a transferable signer as is the case for the <code>vrc</code> receipt message and as was
+origianlly proposed for the <code>ksn</code> message. The seal equivalent is provided in the pre+snu+dig or (i,s,d) 
+triple in the front of the new complex attachment group.<a href="#section-1.1-12" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL</span>
+NOT", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-3">
+      <h2 id="name-security-considerations">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-3-1">TODO Security<a href="#section-3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-4">
+      <h2 id="name-iana-considerations">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-4-1">This document has no IANA actions.<a href="#section-4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-5">
+      <h2 id="name-normative-references">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+      </h2>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+      <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+    <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/rfc8174">https://datatracker.ietf.org/doc/html/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">S. Smith</span></div>
+<div dir="auto" class="left"><span class="org">ProSapien LLC</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:sam@prosapien.com" class="email">sam@prosapien.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
