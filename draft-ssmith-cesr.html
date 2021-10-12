@@ -11,7 +11,7 @@
     " name="description">
 <meta content="xml2rfc 3.10.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-todo-yourname-protocol-latest" name="ietf.draft">
+<meta content="draft-ssmith-cesr-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.10.0
     Python 3.9.5
@@ -1031,7 +1031,7 @@ address div.right {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">TODO Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-todo-yourname-protocol-latest</dd>
+<dd class="internet-draft">draft-ssmith-cesr-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2021-10-12" class="published">12 October 2021</time>
@@ -1053,6 +1053,14 @@ address div.right {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">TODO Abstract<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/WebOfTrust/ietf-cesr">https://github.com/WebOfTrust/ietf-cesr</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1104,12 +1112,17 @@ address div.right {
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-base64-master-code-table" class="xref">Base64 Master Code Table</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-conventions-and-definitions" class="xref">Conventions and Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="xref">3</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
@@ -1132,7 +1145,561 @@ address div.right {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">TODO Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">CESR derivation codes serve several purposes and provide several features. One main purpose is to allow compact encoding of cryptographic material in the text domain. What we mean by text domain is any representation that is is restricted to printable/viewable ASCII text characters. Cryptographic material is largely composed of long strings of pseudo-random numbers. CESR uses the IETF RFC-3638 Base64URL standard to encode cryptographic material as strings of binary bytes into a text domain representation [[1]]. In order to process a given cryptographic material item its derivation from other cryptographic material and the cryptographic suite of operations that govern that derivation also need to be known. Typically this additional cryptographic information may be provided via some datastructure. For compactness CESR encodes the derivation information which includes the cryptographic suite into a lookup table of codes. To keep the codes short, only the essential information is encoded in the table. CESR <span class="bcp14">MUST</span> be used in context so that code and context togetherr fully characterize the cryptographic material usage and derivation. This also contributes to compactness.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">These codes are also represented in the textual domain with characters drawn from the Base64 set of characters. Namely Base64 uses characters [A-Z,a-z,-,_]. In addition the "=" character is used as a pad character to ensure lossless round tripping of concatenated binary items to Base64 and back. These 64 characters map to the values [0-63]. The Base64 derivation code is prepended to a given Base64 converted cryptographic material item to produce an extremely compact text domain representation of a given cryptographic material item. When a Base64 derivation code is prepended to a Base64 encoded cryptographic material item, the resultant string of characters is called fully qualified Base64 or qualified Base64 and may be labeled "qb64" for short. We call this a fully qualified cryptographic primitive. This fully qualified compact string (a primitive) may then be used in any text domain representation, including especially name spaces. One other less obvious but important property of KERI's encoding is that all qualified cryptographic material items satisfy what we call lossless composition via concatenation, or composabilty for short. KERI is designed for high performance asynchronous data streaming and event sourcing applications. The sheer volume of cryptographic material, primarily, signatures, in a streaming application demands a streamable protocol. Many of KERI's important use cases benefit specifically from streaming in the text domain not merely the binary domain. Composability allows text domain streams of primitives or portions of streams (streamlets) to be converted as a whole to the binary domain and back again without loss. The attached KID0001 Comment document goes into some length on what composability means.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">But simply, each 8 bit long Base64 character represents only 6 bits of information. Each binary byte represents a full 8 bits of information. When converting streams made up of concatenated primitives back and forth between the text and binary domains, the converted results will not align on byte or character boundaries at the end of each primitive unless the primitives themselves are integer multiples of 24 bits of information. Twenty-four is the least common multiple of six and eight. It takes 3 binary bytes to represent 24 bits of information and 4 Base64 characters to represent 24 bits of information. Composability via concatenation is guaranteed if any primitive is an integer multiple of four characters in the text domain and an integer multiple of three bytes in the binary domain. KERI's derivation code table is designed to satisfy this composability constraint. In other words, fully qualified KERI cryptographic primitives are composable via concatenation in both the text (Base64)and binary domains. This provides the ability to create composable streaming protocols that use KERI's coding table that are equally at home in the text and binary domains. Without composability some other means of framing, delimiting, or enveloping cryptographic material items is needed for lossless conversion of group of cryptographic material items as a group between the text and binary domain. Mere concatenation of a group, which is the most compact, is not supported without composable primitives.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">The length of a composable Base64 derivation code is a function of the length of the converted cyptographic material. The length of the derivation code plus material must be an even multiple of four bytes. Standard Base64 conversions add pad characters to ensure composability of any converted item [[1]]. The number of pad characters is a function of the length of the item to be converted. If the item's length in bytes is a multiple of three bytes then the converted item's length will be a multiple of four base 64 characters and therefore will not need any pad characters. Any binary item whose length mod 3 is 1 will need 2 pad characters to makes its converted length a multiple of four characters. Any binary item whose length mod 3 is 2 will need 1 pad characters to makes its converted length a multiple of four characters. Consequently the most compact encoding is to replace pad characters with derivation codes (only prepended not appended). This gives either 1 or 2 character codes. When there are no pad characters then the code length is 3 characters. As a result the CESR code table consists primarily of 1, 2, and 4 character codes. Longer codes may be used as long as they satisfy the padding constraint. Thus for converted cryptographic material with 1 pad character, the allowed code lengths are 1, 5, 9, ... characters. For converted cryptographic material with 2 pad characters the allowed code lengths are 2, 6, 10, ... characters. For converted cryptographic material with 0 pad characters the allowed code lengths are 4, 8, 12, ... characters.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">CESR's approach to filling the tables is a first needed first served basis. In addition CESR's requirement that all cryptographic operations maintain at least 128 bits of cryptographic strength precludes the entry of many weak cryptographic suites into the tables, at the least in the compact tables. CESR's compact code table includes only best-of-class cryptographic operations. In 2022 it is expected that NIST will approve standardized post-quantum resistant cryptographic signatures (CESR's digests are already post quantum resistant). At which time the most appropriate siganture suites will be added. Falcon appears to be the leader with open source code already available.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">There are three types of codes in the code table. The context of where the material appears determines which type of code to use. The first type of code, called a basic code, is for basic primitives. The minimum code length for basic codes is 1. The second type of code, called an indexed code, is for indexed primitives. Indexed codes find application with cryptographic material that is attached to events. The seminal use case is for attached signatures. Becasue KERI operates asynchronously, attached signatures for multi-signature schemes may be collected asynchronously. The number of attached signatures may vary. The index within the code enables compact indication of the associated public key from the ordered key list in the key state that may be used to verify a given attached signature. Indexed codes may be used for other contexts where an offset or count is helpful. The minimum code length for indexed codes is two.  The third type of code, called a counter code, is for counting the number of characters, primitives or groups in a collection that follows the cod. In other words a counter code provides a count of the number of members of a group or the sum of all the characters for all the primitives in that group.  Counter codes allow framing of cryptographic material for ease of parsing a concatenated stream of primitives or groups of primitives. They are also called composition codes because they allow the composition via concatenation of primitives and groups of primitives. This enables truly powerful expressions of parsable composable streaming content in both the text and binary domain. The minimun length of a counter code is four characters. Counter codes are standalone and do not have attached cryptographic material. They are primitives in their own right. Counter codes may be stacked, i.e. multiple counter codes may appear in succession. They perform nested compositions on the following crypto material.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<div id="base64-master-code-table">
+<section id="section-1.1">
+        <h3 id="name-base64-master-code-table">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-base64-master-code-table" class="section-name selfRef">Base64 Master Code Table</a>
+        </h3>
+<p id="section-1.1-1">This master table includes all three types of codes separated by headers. The table has 5 columns. These are as follows:<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">1) The Base64 code itself. 
+2) A description of what is encoded or appended to the code.
+3) The length in characters of the code.
+4) the length in characters of the index or count portion of the code 
+5) The length in characters of the fully qualified primitive including code and append material or number of elements in group.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">For each code type, a special character is used when the code length is longer than the minimum length. For basic codes the minimum length is one. Two characters codes start with "0". Four character codes start with "1". For indexed codes the minimum code length is two.  Four character codes start with "0". For counter codes the minimum code length is four. Counter codes all start with "-" and eight character counter codes start with "-0".<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">Parsing operation is as follows: Based on context, an expected code type is selected. The parser then reads the first character of the code. Based on the first character, the parser is able to determine the length of the code. The parser then extracts the full code given its length and then looks up the code in the table to confirm it is a valid code. The table includes the total length of the appended primitive, if any, which allows the parser to then extract the appended characters and perform any conversions if needed on the appended material. For indexed or count codes the table includes the number of characters in the code that are part of the index or count. Lookup in the indexed and count code tables for valid codes do not include the index characters.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1-5">The counter codes are special, they enable framing of a group of crypto material primitives or groups of primitives. This can be used by a parser to perform concurrent or pipelined processing of streams of concatenated fully qualified cypto material or to determine the end of attached material after one event and the start of a new event.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.1-6">There is a dual representation of the table in the binary domain. A Base64 primitive when converted as a whole from Base64 to Base2 binary is in a format called fully qualified base2 or qualified base2 or qb2 for short. Each code character in qb64 converts to a sextet (6 bits) (two octal digits) in qb2 and the appended crypto material is shifted 2 bits for each pad character equivalent. A parser needs to extract the first sextet to determine how many remaining sextets of code there are and from that look up how many bytes total to extract. A binary domain parser of qb2 format must perform some bit level extraction and shifting operations. But this is not difficult for binary domain parsers. Whereas a text domain parser need only use character level operations. This is described in more detail in the KID0001 Commentary document.<a href="#section-1.1-6" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-center" rowspan="1" colspan="1">Code</th>
+              <th class="text-left" rowspan="1" colspan="1">Description</th>
+              <th class="text-left" rowspan="1" colspan="1">Code Length</th>
+              <th class="text-left" rowspan="1" colspan="1">Index Length</th>
+              <th class="text-left" rowspan="1" colspan="1">Total Length</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic One Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">A</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of Ed25519 private key of length 256 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">B</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">C</td>
+              <td class="text-left" rowspan="1" colspan="1">X25519 public encryption key. May be converted from Ed25519 public signing verification key.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">D</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">E</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake3-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">F</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2b-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">G</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2s-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">H</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA3-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">I</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA2-256 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">J</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of ECDSA secp256k1 private key of length 256 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">44</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">K</td>
+              <td class="text-left" rowspan="1" colspan="1">Random seed of Ed448 private key of length 448 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">76</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">L</td>
+              <td class="text-left" rowspan="1" colspan="1">X448 public encryption key. May be converted from Ed448 public signing verification key.</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">76</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">M</td>
+              <td class="text-left" rowspan="1" colspan="1">Short value of length 16 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic Two Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0A</td>
+              <td class="text-left" rowspan="1" colspan="1">Random salt, seed, private key, or sequence number of length 128 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">24</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0B</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0C</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0D</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake3-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0E</td>
+              <td class="text-left" rowspan="1" colspan="1">Blake2b-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0F</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA3-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0G</td>
+              <td class="text-left" rowspan="1" colspan="1">SHA2-512 Digest. Self-addressing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0H</td>
+              <td class="text-left" rowspan="1" colspan="1">Long value of length 32 bits</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Basic Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAA</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">48</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAB</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 public signing verification or encryption key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">48</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAC</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 non-transferable prefix public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">80</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAD</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 public signing verification key. Basic derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">80</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAE</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 signature. Self-signing derivation.</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">156</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAF</td>
+              <td class="text-left" rowspan="1" colspan="1">Tag Base64 4 chars or 3 byte number</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">1AAG</td>
+              <td class="text-left" rowspan="1" colspan="1">DateTime Base64 custom encoded 32 char ISO-8601 DateTime</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">36</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Indexed Two Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">A#</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed25519 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">B#</td>
+              <td class="text-left" rowspan="1" colspan="1">ECDSA secp256k1 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">1</td>
+              <td class="text-left" rowspan="1" colspan="1">88</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Indexed Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0A##</td>
+              <td class="text-left" rowspan="1" colspan="1">Ed448 indexed signature</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">156</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">0B##</td>
+              <td class="text-left" rowspan="1" colspan="1">Label Base64 chars of variable length L=N*4 where N is value of index  total = L+4</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">Variable</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Counter Four Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-A##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 indexed controller signatures</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-B##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 indexed witness signatures</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-C##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 nontransferable identifier receipt couples  pre+sig</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-D##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 transferable identifier receipt quadruples  pre+snu+dig+sig</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-E##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 first seen replay couples fn+dt</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-F##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 transferable indexed sig groups pre+snu+dig + idx sig group</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-U##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in message data</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-V##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total attached grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-W##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total message data grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-X##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total group message data plus attachments qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-Y##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in group. (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-Z##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of grouped material qualified Base64 4 char quadlets (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-a##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of anchor seal groups in list  (anchor seal list) (a)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-c##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of config traits (each trait is 4 char quadlet   (configuration trait list) (c)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-d##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of digest seal Base64 4 char quadlets in digest  (digest seal  (d)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-e##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of event seal Base64 4 char quadlets in seal triple of (event seal) (i, s, d)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-k##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of keys in list  (key list) (k)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-l##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of locations seal Base64 4 char quadlets in seal quadruple of (location seal) (i, s, t, p)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-r##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of root digest seal Base64 4 char quadlets in root digest  (root digest) (rd)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-w##</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of witnesses in list  (witness list or witness remove list or witness add list) (w, wr, wa)</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+              <td class="text-left" rowspan="1" colspan="1">2</td>
+              <td class="text-left" rowspan="1" colspan="1">4</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <strong>Counter Eight Character Codes</strong>
+</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0U#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in message data</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0V#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total attached grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0W#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total message data grouped material qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0X#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of total group message data plus attachments qualified Base64 4 char quadlets</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0Y#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of qualified Base64 groups or primitives in group (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0Z#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of grouped  material qualified Base64 4 char quadlets (context dependent)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-center" rowspan="1" colspan="1">-0a#####</td>
+              <td class="text-left" rowspan="1" colspan="1">Count of anchor seals  (seal groups in list)</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+              <td class="text-left" rowspan="1" colspan="1">5</td>
+              <td class="text-left" rowspan="1" colspan="1">8</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-1.1-8">The table includes one complex group that is composed of two groups. This is the counter attachment group 
+with code<code>-F##</code> where <code>##</code> is replaced by the two character Base64 count of the number of complex groups.<br>
+This is known as the TransIndexedSigGroups counter.  Within the complex group are one more more attached
+groups where each group consists of a triple pre+snu+dig
+followed by a ControllerIdxSigs group that in turn consists of a counter code <code>-A##</code> followed by one or more
+indexed signature primitives. The following example details how this complex group may appear.<a href="#section-1.1-8" class="pilcrow">¶</a></p>
+<p id="section-1.1-9">The example has only one group. The example is annotated with comments, spaces and line feeds for clarity.<a href="#section-1.1-9" class="pilcrow">¶</a></p>
+<p id="section-1.1-10">```
+-FAB     # Trans Indexed Sig Groups counter code 1 following group
+E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y    # trans prefix of signer for sigs
+-EAB0AAAAAAAAAAAAAAAAAAAAAAB    # sequence number of est event of signer's public keys for sigs
+EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM      # digest of est event of signer's public keys for sigs
+-AAD     # Controller Indexed Sigs counter code 3 following sigs
+AA5267UlFg1jHee4Dauht77SzGl8WUC_0oimYG5If3SdIOSzWM8Qs9SFajAilQcozXJVnbkY5stG_K4NbKdNB4AQ         # sig 0
+ABBgeqntZW3Gu4HL0h3odYz6LaZ_SMfmITL-Btoq_7OZFe3L16jmOe49Ur108wH7mnBaq2E_0U0N0c5vgrJtDpAQ    # sig 1
+ACTD7NDX93ZGTkZBBuSeSGsAQ7u0hngpNTZTK_Um7rUZGnLRNJvo5oOnnC1J2iBQHuxoq8PyjdT3BHS2LiPrs2Cg  # sig 2<a href="#section-1.1-10" class="pilcrow">¶</a></p>
+<p id="section-1.1-11">```<a href="#section-1.1-11" class="pilcrow">¶</a></p>
+<p id="section-1.1-12">Given this comples attachment group we no longer need to embed an Event Seal in messages to indicate the
+establishment event for of a transferable signer as is the case for the <code>vrc</code> receipt message and as was
+origianlly proposed for the <code>ksn</code> message. The seal equivalent is provided in the pre+snu+dig or (i,s,d) 
+triple in the front of the new complex attachment group.<a href="#section-1.1-12" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="conventions-and-definitions">
