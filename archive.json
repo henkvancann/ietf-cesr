@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-10-14T00:42:53.169928+00:00",
+  "timestamp": "2021-10-17T00:45:28.470585+00:00",
   "repo": "WebOfTrust/ietf-cesr",
   "labels": [
     {
@@ -215,6 +215,34 @@
       "mergedBy": "SmithSamuelM",
       "mergeCommit": {
         "oid": "3afe38ebc920fa1f01d86645a79509a08b262ad8"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOGNIvo84tSGHE",
+      "title": "0.0.1 Added informative reference",
+      "url": "https://github.com/WebOfTrust/ietf-cesr/pull/7",
+      "state": "MERGED",
+      "author": "SmithSamuelM",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-10-16T20:24:33Z",
+      "updatedAt": "2021-10-16T20:25:18Z",
+      "baseRepository": "WebOfTrust/ietf-cesr",
+      "baseRefName": "main",
+      "baseRefOid": "3afe38ebc920fa1f01d86645a79509a08b262ad8",
+      "headRepository": "SmithSamuelM/ietf-cesr",
+      "headRefName": "main",
+      "headRefOid": "e1d77d5dd17c137e97a6cbfcbcecfef593ace061",
+      "closedAt": "2021-10-16T20:25:17Z",
+      "mergedAt": "2021-10-16T20:25:17Z",
+      "mergedBy": "SmithSamuelM",
+      "mergeCommit": {
+        "oid": "09faf8bfc0c1197d1c0756cfd6f430b741c7cbbf"
       },
       "comments": [],
       "reviews": []
